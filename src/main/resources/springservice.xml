@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/aop
+       https://www.springframework.org/schema/aop/spring-aop.xsd
+       http://www.springframework.org/schema/tx
+       http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+    <!--    注入service层-->
+    <!--    @service是一样的效果-->
+    <!--    <bean class="com.wcj.service.EmployeeService"/>-->
+
+
+    <bean class="org.springframework.jdbc.datasource.DataSourceTransactionManager" id="TransactionManager">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <!--    事务控制-->
+    <aop:config>
+        <aop:pointcut id="txPoint" expression="execution(* com.wcj.service..*(..))"/>
+        <!--        事务增强-->
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="txPoint"/>
+    </aop:config>
+
+    <!--    配置事务如何启动-->
+    <tx:advice id="txAdvice" transaction-manager="TransactionManager">
+        <tx:attributes>
+            <!--            所有方法都是事务方法-->
+            <tx:method name="*"/>
+            <tx:method name="get*" read-only="true"/>
+        </tx:attributes>
+    </tx:advice>
+
+
+</beans>
